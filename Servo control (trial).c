@@ -20,7 +20,7 @@ joyVal = map(joyVal, 0, 1023, 0, 180);
 servo1.write(joyVal);
 joyVal = analogRead(joyY);
 joyVal = map(joyVal, 0, 1023, 0, 180);
-servo1.write(joyVal);
+servo2.write(joyVal);
 
 delay(15);
 }
