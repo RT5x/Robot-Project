@@ -2,11 +2,11 @@
 
 This project relates to the specifications for a personal project I did over Summer 2022.
 
----
+___
 Mechanics: [SOLIDWORKS Student Edition 2020](https://www.solidworks.com/product/students?utm_campaign=202203_glo_cnbstud_3dxp_quantads_en&utm_medium=cpc&utm_source=google&utm_content=search&utm_term=I3W-STU-AC&gclid=CjwKCAjwt7SWBhAnEiwAx8ZLantEhRNsnldlx7fjr6bOHHKIJc0X3DjjxlUbtb59N-aEO6ivGEbntBoCzHIQAvD_BwE) to design all physical components.
----
+___
 Printer: Prusa i3 Mk3
----
+___
 Electronics: Used Arduino microcontrollers to convert electrical signals from analog controllers to pitch and rotation of the arm.
 
   Components used:
@@ -24,6 +24,6 @@ Electronics: Used Arduino microcontrollers to convert electrical signals from an
    - [Arduino Breadboard](https://www.amazon.com/Qunqi-point-Experiment-Breadboard-5-5%C3%978-2%C3%970-85cm/dp/B0135IQ0ZC/ref=asc_df_B0135IQ0ZC/?tag=hyprod-20&linkCode=df0&hvadid=198091709182&hvpos=&hvnetw=g&hvrand=13329600099546597545&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9032043&hvtargid=pla-407203040794&psc=1)
     
    - [MG996R Servo Motor (Base rotation / azimuth)](https://www.amazon.com/MG996R-Torque-Digital-MELIFE-Helicopter/dp/B09BQP2F6M/ref=sr_1_8?keywords=mg996r&qid=1657681536&sr=8-8)
----
+___
 Software: Used the [Arduino IDE](https://www.arduino.cc/en/software) to compile C++ code run by the microcontroller.
----
+___
