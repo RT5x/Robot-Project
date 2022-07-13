@@ -26,4 +26,4 @@ Electronics: Used Arduino microcontrollers to convert electrical signals from an
    - [MG996R Servo Motor (Base rotation / azimuth)](https://www.amazon.com/MG996R-Torque-Digital-MELIFE-Helicopter/dp/B09BQP2F6M/ref=sr_1_8?keywords=mg996r&qid=1657681536&sr=8-8)
 ___
 Software: Used the [Arduino IDE](https://www.arduino.cc/en/software) to compile C++ code run by the microcontroller.
-___
+
