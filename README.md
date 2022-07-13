@@ -12,7 +12,7 @@ Electronics: Used Arduino microcontrollers to convert electrical signals from an
   
    - SG90 MicroServo motors (claw pitch and extension)
     
-   - HC-05 Bluetooth module for Arduino
+   - [HC-05 Bluetooth module for Arduino](https://www.amazon.com/KY-023-Joystick-Sensor-Module-Arduino/dp/B01M5L1BMS/ref=asc_df_B01M5L1BMS/?tag=hyprod-20&linkCode=df0&hvadid=194024095585&hvpos=&hvnetw=g&hvrand=8385209886003373967&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9032043&hvtargid=pla-311062729090&psc=1)
     
    - Elegoo Arduino Uno R3
     
