@@ -2,7 +2,7 @@
 
 This project relates to the specifications for a personal project I did over Summer 2022.
 
-Mechanics: SOLIDWORKS Student Edition 2020 to design all physical components.
+Mechanics: [SOLIDWORKS Student Edition 2020](https://www.solidworks.com/product/students?utm_campaign=202203_glo_cnbstud_3dxp_quantads_en&utm_medium=cpc&utm_source=google&utm_content=search&utm_term=I3W-STU-AC&gclid=CjwKCAjwt7SWBhAnEiwAx8ZLantEhRNsnldlx7fjr6bOHHKIJc0X3DjjxlUbtb59N-aEO6ivGEbntBoCzHIQAvD_BwE) to design all physical components.
 
 Printer: Prusa i3 Mk3
 
