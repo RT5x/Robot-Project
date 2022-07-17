@@ -1,309 +1,186 @@
-#include <SoftwareSerial.h>
-#include <Servo.h>
 
-Servo servo01;
-Servo servo02;
-Servo servo03;
-Servo servo04;
-Servo servo05;
-Servo servo06;
+#include "Arduino.h"
+#include "BTHC05.h"
+#include "Joystick.h"
+#include "Servo.h"
+#include "StepperMotor.h"
 
-SoftwareSerial Bluetooth(3, 4); // Arduino(RX, TX) - HC-05 Bluetooth (TX, RX)
+// Pins
+#define BTHC05_PIN_TXD	11
+#define BTHC05_PIN_RXD	10
+#define JOYSTICKSF_PIN_SEL	2
+#define JOYSTICKSF_PIN_VERT	A4
+#define JOYSTICKSF_PIN_HORZ	A3
+#define SERVO360MICRO1_1_PIN_SIG	3
+#define SERVO360MICRO2_2_PIN_SIG	4
+#define SERVO360MICRO3_3_PIN_SIG	5
+#define STEPPERGEARED_PIN_STEP	7
+#define STEPPERGEARED_PIN_DIR	6
 
-int servo1Pos, servo2Pos, servo3Pos, servo4Pos, servo5Pos, servo6Pos; // current position
-int servo1PPos, servo2PPos, servo3PPos, servo4PPos, servo5PPos, servo6PPos; // previous position
-int servo01SP[50], servo02SP[50], servo03SP[50], servo04SP[50], servo05SP[50], servo06SP[50]; // for storing positions/steps
-int speedDelay = 20;
-int index = 0;
-String dataIn = "";
+#define stepperGearedDelayTime  1000
 
-void setup() {
-  servo01.attach(5);
-  servo02.attach(6);
-  servo03.attach(7);
-  servo04.attach(8);
-  servo05.attach(9);
-  servo06.attach(10);
-  Bluetooth.begin(38400); // Default baud rate of the Bluetooth module
-  Bluetooth.setTimeout(1);
-  delay(20);
-  // Robot arm initial position
-  servo1PPos = 90;
-  servo01.write(servo1PPos);
-  servo2PPos = 150;
-  servo02.write(servo2PPos);
-  servo3PPos = 35;
-  servo03.write(servo3PPos);
-  servo4PPos = 140;
-  servo04.write(servo4PPos);
-  servo5PPos = 85;
-  servo05.write(servo5PPos);
-  servo6PPos = 80;
-  servo06.write(servo6PPos);
+BTHC05 bthc05(BTHC05_PIN_RXD,BTHC05_PIN_TXD);
+Joystick joystickSF(JOYSTICKSF_PIN_VERT,JOYSTICKSF_PIN_HORZ,JOYSTICKSF_PIN_SEL);
+Servo servo360Micro1_1;
+Servo servo360Micro2_2;
+Servo servo360Micro3_3;
+StepperMotor stepperGeared(STEPPERGEARED_PIN_STEP,STEPPERGEARED_PIN_DIR);
+
+
+// define vars for testing menu
+const int timeout = 10000;       //define timeout of 10 sec
+char menuOption = 0;
+long time0;
+
+// Setup the essentials for your circuit to work. It runs first every time your circuit is powered with electricity.
+void setup() 
+{
+    // Setup Serial which is useful for debugging
+    // Use the Serial Monitor to view printed messages
+    Serial.begin(9600);
+    while (!Serial) ; // wait for serial port to connect. Needed for native USB
+    Serial.println("start");
+    
+    bthc05.begin(9600);
+    //This example uses HC-05 Bluetooth to communicate with an Android device.
+    //Download bluetooth terminal from google play store, https://play.google.com/store/apps/details?id=Qwerty.BluetoothTerminal&hl=en
+    //Pair and connect to 'HC-05', the default password for connection is '1234'.
+    //You should see this message from your arduino on your android device
+    bthc05.println("Bluetooth On....");
+    // enable the stepper motor, use .disable() to disable the motor
+    stepperGeared.enable();
+    // set stepper motor speed by changing the delay value, the higher the delay the slower the motor will turn
+    stepperGeared.setStepDelay(stepperGearedDelayTime);
+    menuOption = menu();
+    
 }
 
-void loop() {
-  // Check for incoming data
-  if (Bluetooth.available() > 0) {
-    dataIn = Bluetooth.readString();  // Read the data as string
+// Main logic of your circuit. It defines the interaction between the components you selected. After setup, it runs over and over again, in an eternal loop.
+void loop() 
+{
     
-    // If "Waist" slider has changed value - Move Servo 1 to position
-    if (dataIn.startsWith("s1")) {
-      String dataInS = dataIn.substring(2, dataIn.length()); // Extract only the number. E.g. from "s1120" to "120"
-      servo1Pos = dataInS.toInt();  // Convert the string into integer
-      // We use for loops so we can control the speed of the servo
-      // If previous position is bigger then current position
-      if (servo1PPos > servo1Pos) {
-        for ( int j = servo1PPos; j >= servo1Pos; j--) {   // Run servo down
-          servo01.write(j);
-          delay(20);    // defines the speed at which the servo rotates
-        }
-      }
-      // If previous position is smaller then current position
-      if (servo1PPos < servo1Pos) {
-        for ( int j = servo1PPos; j <= servo1Pos; j++) {   // Run servo up
-          servo01.write(j);
-          delay(20);
-        }
-      }
-      servo1PPos = servo1Pos;   // set current position as previous position
+    
+    if(menuOption == '1') {
+    // HC - 05 Bluetooth Serial Module - Test Code
+    String bthc05Str = "";
+    //Receive String from bluetooth device
+    if (bthc05.available())
+    {
+    //Read a complete line from bluetooth terminal
+    bthc05Str = bthc05.readStringUntil('\n');
+    // Print raw data to serial monitor
+    Serial.print("BT Raw Data: ");
+    Serial.println(bthc05Str);
     }
-    
-    // Move Servo 2
-    if (dataIn.startsWith("s2")) {
-      String dataInS = dataIn.substring(2, dataIn.length());
-      servo2Pos = dataInS.toInt();
+    //Send sensor data to Bluetooth device  
+    bthc05.println("PUT YOUR SENSOR DATA HERE");
+    }
+    else if(menuOption == '2') {
+    // Thumb Joystick - Test Code
+    // Read Joystick X,Y axis and press
+    int joystickSFX =  joystickSF.getX();
+    int joystickSFY =  joystickSF.getY();
+    int joystickSFSW =  joystickSF.getSW();
+    Serial.print(F("X: ")); Serial.print(joystickSFX);
+    Serial.print(F("\tY: ")); Serial.print(joystickSFY);
+    Serial.print(F("\tSW: ")); Serial.println(joystickSFSW);
 
-      if (servo2PPos > servo2Pos) {
-        for ( int j = servo2PPos; j >= servo2Pos; j--) {
-          servo02.write(j);
-          delay(50);
-        }
-      }
-      if (servo2PPos < servo2Pos) {
-        for ( int j = servo2PPos; j <= servo2Pos; j++) {
-          servo02.write(j);
-          delay(50);
-        }
-      }
-      servo2PPos = servo2Pos;
     }
-    // Move Servo 3
-    if (dataIn.startsWith("s3")) {
-      String dataInS = dataIn.substring(2, dataIn.length());
-      servo3Pos = dataInS.toInt();
-      if (servo3PPos > servo3Pos) {
-        for ( int j = servo3PPos; j >= servo3Pos; j--) {
-          servo03.write(j);
-          delay(30);
-        }
-      }
-      if (servo3PPos < servo3Pos) {
-        for ( int j = servo3PPos; j <= servo3Pos; j++) {
-          servo03.write(j);
-          delay(30);
-        }
-      }
-      servo3PPos = servo3Pos;
+    else if(menuOption == '3') {
+    // Continuous Rotation Micro Servo - FS90R #1 - Test Code
+    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
+    servo360Micro1_1.attach(SERVO360MICRO1_1_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servo360Micro1_1.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro1_1.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro1_1.write(90);    // 6. sending 90 stops the servo 
+    delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro1_1.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
-    // Move Servo 4
-    if (dataIn.startsWith("s4")) {
-      String dataInS = dataIn.substring(2, dataIn.length());
-      servo4Pos = dataInS.toInt();
-      if (servo4PPos > servo4Pos) {
-        for ( int j = servo4PPos; j >= servo4Pos; j--) {
-          servo04.write(j);
-          delay(30);
-        }
-      }
-      if (servo4PPos < servo4Pos) {
-        for ( int j = servo4PPos; j <= servo4Pos; j++) {
-          servo04.write(j);
-          delay(30);
-        }
-      }
-      servo4PPos = servo4Pos;
+    else if(menuOption == '4') {
+    // Continuous Rotation Micro Servo - FS90R #2 - Test Code
+    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
+    servo360Micro2_2.attach(SERVO360MICRO2_2_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servo360Micro2_2.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro2_2.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro2_2.write(90);    // 6. sending 90 stops the servo 
+    delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro2_2.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
-    // Move Servo 5
-    if (dataIn.startsWith("s5")) {
-      String dataInS = dataIn.substring(2, dataIn.length());
-      servo5Pos = dataInS.toInt();
-      if (servo5PPos > servo5Pos) {
-        for ( int j = servo5PPos; j >= servo5Pos; j--) {
-          servo05.write(j);
-          delay(30);
-        }
-      }
-      if (servo5PPos < servo5Pos) {
-        for ( int j = servo5PPos; j <= servo5Pos; j++) {
-          servo05.write(j);
-          delay(30);
-        }
-      }
-      servo5PPos = servo5Pos;
+    else if(menuOption == '5') {
+    // Continuous Rotation Micro Servo - FS90R #3 - Test Code
+    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
+    servo360Micro3_3.attach(SERVO360MICRO3_3_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servo360Micro3_3.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro3_3.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro3_3.write(90);    // 6. sending 90 stops the servo 
+    delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
+    servo360Micro3_3.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
-    // Move Servo 6
-    if (dataIn.startsWith("s6")) {
-      String dataInS = dataIn.substring(2, dataIn.length());
-      servo6Pos = dataInS.toInt();
-      if (servo6PPos > servo6Pos) {
-        for ( int j = servo6PPos; j >= servo6Pos; j--) {
-          servo06.write(j);
-          delay(30);
-        }
-      }
-      if (servo6PPos < servo6Pos) {
-        for ( int j = servo6PPos; j <= servo6Pos; j++) {
-          servo06.write(j);
-          delay(30);
-        }
-      }
-      servo6PPos = servo6Pos; 
+    else if(menuOption == '6') {
+    // Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing - Test Code
+    // the higher the time value the slower the motor will run
+    stepperGeared.step(1, 1000);  // move motor 1000 steps in one direction
+    delay(1000);            // short stop
+    stepperGeared.step(0, 1000);  // move motor 1000 steps in the other dirction
+    delay(1000);            //short stop
     }
-    // If button "SAVE" is pressed
-    if (dataIn.startsWith("SAVE")) {
-      servo01SP[index] = servo1PPos;  // save position into the array
-      servo02SP[index] = servo2PPos;
-      servo03SP[index] = servo3PPos;
-      servo04SP[index] = servo4PPos;
-      servo05SP[index] = servo5PPos;
-      servo06SP[index] = servo6PPos;
-      index++;                        // Increase the array index
+    
+    if (millis() - time0 > timeout)
+    {
+        menuOption = menu();
     }
-    // If button "RUN" is pressed
-    if (dataIn.startsWith("RUN")) {
-      runservo();  // Automatic mode - run the saved steps 
-    }
-    // If button "RESET" is pressed
-    if ( dataIn == "RESET") {
-      memset(servo01SP, 0, sizeof(servo01SP)); // Clear the array data to 0
-      memset(servo02SP, 0, sizeof(servo02SP));
-      memset(servo03SP, 0, sizeof(servo03SP));
-      memset(servo04SP, 0, sizeof(servo04SP));
-      memset(servo05SP, 0, sizeof(servo05SP));
-      memset(servo06SP, 0, sizeof(servo06SP));
-      index = 0;  // Index to 0
-    }
-  }
+    
 }
 
-// Automatic mode custom function - run the saved steps
-void runservo() {
-  while (dataIn != "RESET") {   // Run the steps over and over again until "RESET" button is pressed
-    for (int i = 0; i <= index - 2; i++) {  // Run through all steps(index)
-      if (Bluetooth.available() > 0) {      // Check for incomding data
-        dataIn = Bluetooth.readString();
-        if ( dataIn == "PAUSE") {           // If button "PAUSE" is pressed
-          while (dataIn != "RUN") {         // Wait until "RUN" is pressed again
-            if (Bluetooth.available() > 0) {
-              dataIn = Bluetooth.readString();
-              if ( dataIn == "RESET") {     
-                break;
-              }
+
+
+// Menu function for selecting the components to be tested
+// Follow serial monitor for instrcutions
+char menu()
+{
+
+    Serial.println(F("\nWhich component would you like to test?"));
+    Serial.println(F("(1) HC - 05 Bluetooth Serial Module"));
+    Serial.println(F("(2) Thumb Joystick"));
+    Serial.println(F("(3) Continuous Rotation Micro Servo - FS90R #1"));
+    Serial.println(F("(4) Continuous Rotation Micro Servo - FS90R #2"));
+    Serial.println(F("(5) Continuous Rotation Micro Servo - FS90R #3"));
+    Serial.println(F("(6) Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing"));
+    Serial.println(F("(menu) send anything else or press on board reset button\n"));
+    while (!Serial.available());
+
+    // Read data from serial monitor if received
+    while (Serial.available()) 
+    {
+        char c = Serial.read();
+        if (isAlphaNumeric(c)) 
+        {   
+            
+            if(c == '1') 
+    			Serial.println(F("Now Testing HC - 05 Bluetooth Serial Module"));
+    		else if(c == '2') 
+    			Serial.println(F("Now Testing Thumb Joystick"));
+    		else if(c == '3') 
+    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #1"));
+    		else if(c == '4') 
+    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #2"));
+    		else if(c == '5') 
+    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #3"));
+    		else if(c == '6') 
+    			Serial.println(F("Now Testing Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing"));
+            else
+            {
+                Serial.println(F("illegal input!"));
+                return 0;
             }
-          }
+            time0 = millis();
+            return c;
         }
-        // If speed slider is changed
-        if (dataIn.startsWith("ss")) {
-          String dataInS = dataIn.substring(2, dataIn.length());
-          speedDelay = dataInS.toInt(); // Change servo speed (delay time)
-        }
-      }
-      // Servo 1
-      if (servo01SP[i] == servo01SP[i + 1]) {
-      }
-      if (servo01SP[i] > servo01SP[i + 1]) {
-        for ( int j = servo01SP[i]; j >= servo01SP[i + 1]; j--) {
-          servo01.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo01SP[i] < servo01SP[i + 1]) {
-        for ( int j = servo01SP[i]; j <= servo01SP[i + 1]; j++) {
-          servo01.write(j);
-          delay(speedDelay);
-        }
-      }
-
-      // Servo 2
-      if (servo02SP[i] == servo02SP[i + 1]) {
-      }
-      if (servo02SP[i] > servo02SP[i + 1]) {
-        for ( int j = servo02SP[i]; j >= servo02SP[i + 1]; j--) {
-          servo02.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo02SP[i] < servo02SP[i + 1]) {
-        for ( int j = servo02SP[i]; j <= servo02SP[i + 1]; j++) {
-          servo02.write(j);
-          delay(speedDelay);
-        }
-      }
-
-      // Servo 3
-      if (servo03SP[i] == servo03SP[i + 1]) {
-      }
-      if (servo03SP[i] > servo03SP[i + 1]) {
-        for ( int j = servo03SP[i]; j >= servo03SP[i + 1]; j--) {
-          servo03.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo03SP[i] < servo03SP[i + 1]) {
-        for ( int j = servo03SP[i]; j <= servo03SP[i + 1]; j++) {
-          servo03.write(j);
-          delay(speedDelay);
-        }
-      }
-
-      // Servo 4
-      if (servo04SP[i] == servo04SP[i + 1]) {
-      }
-      if (servo04SP[i] > servo04SP[i + 1]) {
-        for ( int j = servo04SP[i]; j >= servo04SP[i + 1]; j--) {
-          servo04.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo04SP[i] < servo04SP[i + 1]) {
-        for ( int j = servo04SP[i]; j <= servo04SP[i + 1]; j++) {
-          servo04.write(j);
-          delay(speedDelay);
-        }
-      }
-
-      // Servo 5
-      if (servo05SP[i] == servo05SP[i + 1]) {
-      }
-      if (servo05SP[i] > servo05SP[i + 1]) {
-        for ( int j = servo05SP[i]; j >= servo05SP[i + 1]; j--) {
-          servo05.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo05SP[i] < servo05SP[i + 1]) {
-        for ( int j = servo05SP[i]; j <= servo05SP[i + 1]; j++) {
-          servo05.write(j);
-          delay(speedDelay);
-        }
-      }
-
-      // Servo 6
-      if (servo06SP[i] == servo06SP[i + 1]) {
-      }
-      if (servo06SP[i] > servo06SP[i + 1]) {
-        for ( int j = servo06SP[i]; j >= servo06SP[i + 1]; j--) {
-          servo06.write(j);
-          delay(speedDelay);
-        }
-      }
-      if (servo06SP[i] < servo06SP[i + 1]) {
-        for ( int j = servo06SP[i]; j <= servo06SP[i + 1]; j++) {
-          servo06.write(j);
-          delay(speedDelay);
-        }
-      }
     }
-  }
 }
