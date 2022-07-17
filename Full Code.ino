@@ -2,29 +2,42 @@
 #include "Arduino.h"
 #include "BTHC05.h"
 #include "Joystick.h"
+#include "LED.h"
+#include "Button.h"
 #include "Servo.h"
-#include "StepperMotor.h"
 
-// Pins
+
+// Pin Definitions
 #define BTHC05_PIN_TXD	11
 #define BTHC05_PIN_RXD	10
-#define JOYSTICKSF_PIN_SEL	2
-#define JOYSTICKSF_PIN_VERT	A4
-#define JOYSTICKSF_PIN_HORZ	A3
-#define SERVO360MICRO1_1_PIN_SIG	3
-#define SERVO360MICRO2_2_PIN_SIG	4
-#define SERVO360MICRO3_3_PIN_SIG	5
-#define STEPPERGEARED_PIN_STEP	7
-#define STEPPERGEARED_PIN_DIR	6
+#define JOYSTICK_PIN_SW	2
+#define JOYSTICK_PIN_VRX	A3
+#define JOYSTICK_PIN_VRY	A4
+#define LEDB_PIN_VIN	5
+#define PUSHBUTTON_PIN_2	3
+#define SERVO360MICRO_PIN_SIG	4
+#define SERVOMD1_1_PIN_SIG	6
+#define SERVOMD2_2_PIN_SIG	7
+#define SERVOMD3_3_PIN_SIG	8
 
-#define stepperGearedDelayTime  1000
 
+
+// Global variables and defines
+const int servoMD1_1RestPosition   = 20;  //Starting position
+const int servoMD1_1TargetPosition = 150; //Position when event is detected
+const int servoMD2_2RestPosition   = 20;  //Starting position
+const int servoMD2_2TargetPosition = 150; //Position when event is detected
+const int servoMD3_3RestPosition   = 20;  //Starting position
+const int servoMD3_3TargetPosition = 150; //Position when event is detected
+// object initialization
 BTHC05 bthc05(BTHC05_PIN_RXD,BTHC05_PIN_TXD);
-Joystick joystickSF(JOYSTICKSF_PIN_VERT,JOYSTICKSF_PIN_HORZ,JOYSTICKSF_PIN_SEL);
-Servo servo360Micro1_1;
-Servo servo360Micro2_2;
-Servo servo360Micro3_3;
-StepperMotor stepperGeared(STEPPERGEARED_PIN_STEP,STEPPERGEARED_PIN_DIR);
+Joystick joystick(JOYSTICK_PIN_VRX,JOYSTICK_PIN_VRY,JOYSTICK_PIN_SW);
+LED ledB(LEDB_PIN_VIN);
+Button pushButton(PUSHBUTTON_PIN_2);
+Servo servo360Micro;
+Servo servoMD1_1;
+Servo servoMD2_2;
+Servo servoMD3_3;
 
 
 // define vars for testing menu
@@ -47,10 +60,19 @@ void setup()
     //Pair and connect to 'HC-05', the default password for connection is '1234'.
     //You should see this message from your arduino on your android device
     bthc05.println("Bluetooth On....");
-    // enable the stepper motor, use .disable() to disable the motor
-    stepperGeared.enable();
-    // set stepper motor speed by changing the delay value, the higher the delay the slower the motor will turn
-    stepperGeared.setStepDelay(stepperGearedDelayTime);
+    pushButton.init();
+    servoMD1_1.attach(SERVOMD1_1_PIN_SIG);
+    servoMD1_1.write(servoMD1_1RestPosition);
+    delay(100);
+    servoMD1_1.detach();
+    servoMD2_2.attach(SERVOMD2_2_PIN_SIG);
+    servoMD2_2.write(servoMD2_2RestPosition);
+    delay(100);
+    servoMD2_2.detach();
+    servoMD3_3.attach(SERVOMD3_3_PIN_SIG);
+    servoMD3_3.write(servoMD3_3RestPosition);
+    delay(100);
+    servoMD3_3.detach();
     menuOption = menu();
     
 }
@@ -76,59 +98,77 @@ void loop()
     bthc05.println("PUT YOUR SENSOR DATA HERE");
     }
     else if(menuOption == '2') {
-    // Thumb Joystick - Test Code
+    // PS2 X Y Axis Joystick Module - Test Code
     // Read Joystick X,Y axis and press
-    int joystickSFX =  joystickSF.getX();
-    int joystickSFY =  joystickSF.getY();
-    int joystickSFSW =  joystickSF.getSW();
-    Serial.print(F("X: ")); Serial.print(joystickSFX);
-    Serial.print(F("\tY: ")); Serial.print(joystickSFY);
-    Serial.print(F("\tSW: ")); Serial.println(joystickSFSW);
+    int joystickX =  joystick.getX();
+    int joystickY =  joystick.getY();
+    int joystickSW =  joystick.getSW();
+    Serial.print(F("X: ")); Serial.print(joystickX);
+    Serial.print(F("\tY: ")); Serial.print(joystickY);
+    Serial.print(F("\tSW: ")); Serial.println(joystickSW);
 
     }
     else if(menuOption == '3') {
-    // Continuous Rotation Micro Servo - FS90R #1 - Test Code
-    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
-    servo360Micro1_1.attach(SERVO360MICRO1_1_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servo360Micro1_1.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
-    delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro1_1.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
-    delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro1_1.write(90);    // 6. sending 90 stops the servo 
-    delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro1_1.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    // LED - Basic Blue 5mm - Test Code
+    // The LED will turn on and fade till it is off
+    for(int i=255 ; i> 0 ; i -= 5)
+    {
+        ledB.dim(i);                      // 1. Dim Led 
+        delay(15);                               // 2. waits 5 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    }                                          
+    ledB.off();                        // 3. turns off
     }
     else if(menuOption == '4') {
-    // Continuous Rotation Micro Servo - FS90R #2 - Test Code
-    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
-    servo360Micro2_2.attach(SERVO360MICRO2_2_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servo360Micro2_2.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
-    delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro2_2.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
-    delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro2_2.write(90);    // 6. sending 90 stops the servo 
-    delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro2_2.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    // Mini Pushbutton Switch - Test Code
+    //Read pushbutton state. 
+    //if button is pressed function will return HIGH (1). if not function will return LOW (0). 
+    //for debounce funtionality try also pushButton.onPress(), .onRelease() and .onChange().
+    //if debounce is not working properly try changing 'debounceDelay' variable in Button.h
+    bool pushButtonVal = pushButton.read();
+    Serial.print(F("Val: ")); Serial.println(pushButtonVal);
+
     }
     else if(menuOption == '5') {
-    // Continuous Rotation Micro Servo - FS90R #3 - Test Code
+    // Continuous Rotation Micro Servo - FS90R - Test Code
     // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
-    servo360Micro3_3.attach(SERVO360MICRO3_3_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servo360Micro3_3.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    servo360Micro.attach(SERVO360MICRO_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servo360Micro.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
     delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro3_3.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
+    servo360Micro.write(0);    // 4. turns servo CCW in full speed. change the value in the brackets (0) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
     delay(2000);                              // 5. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro3_3.write(90);    // 6. sending 90 stops the servo 
+    servo360Micro.write(90);    // 6. sending 90 stops the servo 
     delay(2000);                              // 7. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
-    servo360Micro3_3.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    servo360Micro.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
     else if(menuOption == '6') {
-    // Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing - Test Code
-    // the higher the time value the slower the motor will run
-    stepperGeared.step(1, 1000);  // move motor 1000 steps in one direction
-    delay(1000);            // short stop
-    stepperGeared.step(0, 1000);  // move motor 1000 steps in the other dirction
-    delay(1000);            //short stop
+    // Standard Size - High Torque - Metal Gear Servo - MG995 #1 - Test Code
+    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+    servoMD1_1.attach(SERVOMD1_1_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servoMD1_1.write(servoMD1_1TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
+    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD1_1.write(servoMD1_1RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
+    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD1_1.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    }
+    else if(menuOption == '7') {
+    // Standard Size - High Torque - Metal Gear Servo - MG995 #2 - Test Code
+    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+    servoMD2_2.attach(SERVOMD2_2_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servoMD2_2.write(servoMD2_2TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
+    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD2_2.write(servoMD2_2RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
+    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD2_2.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    }
+    else if(menuOption == '8') {
+    // Standard Size - High Torque - Metal Gear Servo - MG995 #3 - Test Code
+    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+    servoMD3_3.attach(SERVOMD3_3_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servoMD3_3.write(servoMD3_3TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
+    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD3_3.write(servoMD3_3RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
+    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoMD3_3.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
     
     if (millis() - time0 > timeout)
@@ -147,11 +187,13 @@ char menu()
 
     Serial.println(F("\nWhich component would you like to test?"));
     Serial.println(F("(1) HC - 05 Bluetooth Serial Module"));
-    Serial.println(F("(2) Thumb Joystick"));
-    Serial.println(F("(3) Continuous Rotation Micro Servo - FS90R #1"));
-    Serial.println(F("(4) Continuous Rotation Micro Servo - FS90R #2"));
-    Serial.println(F("(5) Continuous Rotation Micro Servo - FS90R #3"));
-    Serial.println(F("(6) Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing"));
+    Serial.println(F("(2) PS2 X Y Axis Joystick Module"));
+    Serial.println(F("(3) LED - Basic Blue 5mm"));
+    Serial.println(F("(4) Mini Pushbutton Switch"));
+    Serial.println(F("(5) Continuous Rotation Micro Servo - FS90R"));
+    Serial.println(F("(6) Standard Size - High Torque - Metal Gear Servo - MG995 #1"));
+    Serial.println(F("(7) Standard Size - High Torque - Metal Gear Servo - MG995 #2"));
+    Serial.println(F("(8) Standard Size - High Torque - Metal Gear Servo - MG995 #3"));
     Serial.println(F("(menu) send anything else or press on board reset button\n"));
     while (!Serial.available());
 
@@ -165,15 +207,19 @@ char menu()
             if(c == '1') 
     			Serial.println(F("Now Testing HC - 05 Bluetooth Serial Module"));
     		else if(c == '2') 
-    			Serial.println(F("Now Testing Thumb Joystick"));
+    			Serial.println(F("Now Testing PS2 X Y Axis Joystick Module"));
     		else if(c == '3') 
-    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #1"));
+    			Serial.println(F("Now Testing LED - Basic Blue 5mm"));
     		else if(c == '4') 
-    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #2"));
+    			Serial.println(F("Now Testing Mini Pushbutton Switch"));
     		else if(c == '5') 
-    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R #3"));
+    			Serial.println(F("Now Testing Continuous Rotation Micro Servo - FS90R"));
     		else if(c == '6') 
-    			Serial.println(F("Now Testing Small Reduction Stepper Motor with EasyDriver - 5VDC 32-Step 1/16 Gearing"));
+    			Serial.println(F("Now Testing Standard Size - High Torque - Metal Gear Servo - MG995 #1"));
+    		else if(c == '7') 
+    			Serial.println(F("Now Testing Standard Size - High Torque - Metal Gear Servo - MG995 #2"));
+    		else if(c == '8') 
+    			Serial.println(F("Now Testing Standard Size - High Torque - Metal Gear Servo - MG995 #3"));
             else
             {
                 Serial.println(F("illegal input!"));
