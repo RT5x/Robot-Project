@@ -1,4 +1,4 @@
-# Robot-Project
+# Robot Arm Project
 
 This project relates to the specifications for a personal project I did over Summer 2022.
 
