@@ -6,6 +6,8 @@ ___
 Mechanics: [SOLIDWORKS Student Edition 2020](https://www.solidworks.com/product/students?utm_campaign=202203_glo_cnbstud_3dxp_quantads_en&utm_medium=cpc&utm_source=google&utm_content=search&utm_term=I3W-STU-AC&gclid=CjwKCAjwt7SWBhAnEiwAx8ZLantEhRNsnldlx7fjr6bOHHKIJc0X3DjjxlUbtb59N-aEO6ivGEbntBoCzHIQAvD_BwE) to design all physical components.
 ___
 3D Printer: Prusa i3 Mk3
+
+Slicer Software: [PrusaSclicer 2.4.2](https://github.com/prusa3d/PrusaSlicer/releases)
 ___
 Electronics: Used Arduino microcontrollers to convert electrical signals from analog controllers to pitch and rotation of the arm.
 
@@ -26,4 +28,7 @@ Electronics: Used Arduino microcontrollers to convert electrical signals from an
    - [MG996R Servo Motor (Base rotation / azimuth)](https://www.amazon.com/MG996R-Torque-Digital-MELIFE-Helicopter/dp/B09BQP2F6M/ref=sr_1_8?keywords=mg996r&qid=1657681536&sr=8-8)
 ___
 Software: Used the [Arduino IDE](https://www.arduino.cc/en/software) to compile C++ code run by the microcontroller.
+___
+Miscellaneous:
+  
 
