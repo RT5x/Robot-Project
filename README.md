@@ -5,7 +5,7 @@ This project relates to the specifications for a personal project I did over Sum
 ___
 Mechanics: [SOLIDWORKS Student Edition 2020](https://www.solidworks.com/product/students?utm_campaign=202203_glo_cnbstud_3dxp_quantads_en&utm_medium=cpc&utm_source=google&utm_content=search&utm_term=I3W-STU-AC&gclid=CjwKCAjwt7SWBhAnEiwAx8ZLantEhRNsnldlx7fjr6bOHHKIJc0X3DjjxlUbtb59N-aEO6ivGEbntBoCzHIQAvD_BwE) to design CAD models for all physical components and Engineering Drawings.
 ___
-3D Printer: Prusa i3 Mk3
+3D Printer: Prusa i3 Mk3S
 
 Slicer Software: [PrusaSclicer 2.4.2](https://github.com/prusa3d/PrusaSlicer/releases)
 ___
