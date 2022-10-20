@@ -39,25 +39,20 @@ Servo servoMD2_2;
 Servo servoMD3_3;
 
 
-// define vars for testing menu
 const int timeout = 10000;       //define timeout of 10 sec
 char menuOption = 0;
 long time0;
 
-// Setup the essentials for your circuit to work. It runs first every time your circuit is powered with electricity.
+
 void setup() 
 {
-    // Setup Serial which is useful for debugging
-    // Use the Serial Monitor to view printed messages
+
     Serial.begin(9600);
     while (!Serial) ; // wait for serial port to connect. Needed for native USB
     Serial.println("start");
     
     bthc05.begin(9600);
-    //This example uses HC-05 Bluetooth to communicate with an Android device.
-    //Download bluetooth terminal from google play store, https://play.google.com/store/apps/details?id=Qwerty.BluetoothTerminal&hl=en
-    //Pair and connect to 'HC-05', the default password for connection is '1234'.
-    //You should see this message from your arduino on your android device
+
     bthc05.println("Bluetooth On....");
     pushButton.init();
     servoMD1_1.attach(SERVOMD1_1_PIN_SIG);
@@ -76,20 +71,19 @@ void setup()
     
 }
 
-// Main logic of your circuit. It defines the interaction between the components you selected. After setup, it runs over and over again, in an eternal loop.
+
 void loop() 
 {
     
     
     if(menuOption == '1') {
-    // HC - 05 Bluetooth Serial Module - Test Code
+ 
     String bthc05Str = "";
-    //Receive String from bluetooth device
+
     if (bthc05.available())
     {
-    //Read a complete line from bluetooth terminal
-    bthc05Str = bthc05.readStringUntil('\n');
-    // Print raw data to serial monitor
+
+
     Serial.print("BT Raw Data: ");
     Serial.println(bthc05Str);
     }
@@ -97,8 +91,7 @@ void loop()
     bthc05.println("PUT YOUR SENSOR DATA HERE");
     }
     else if(menuOption == '2') {
-    // PS2 X Y Axis Joystick Module - Test Code
-    // Read Joystick X,Y axis and press
+
     int joystickX =  joystick.getX();
     int joystickY =  joystick.getY();
     int joystickSW =  joystick.getSW();
@@ -108,8 +101,7 @@ void loop()
 
     }
     else if(menuOption == '3') {
-    // LED - Basic Blue 5mm - Test Code
-    // The LED will turn on and fade till it is off
+
     for(int i=255 ; i> 0 ; i -= 5)
     {
         ledB.dim(i);                      // 1. Dim Led 
@@ -118,18 +110,13 @@ void loop()
     ledB.off();                        // 3. turns off
     }
     else if(menuOption == '4') {
-    // Mini Pushbutton Switch - Test Code
-    //Read pushbutton state. 
-    //if button is pressed function will return HIGH (1). if not function will return LOW (0). 
-    //for debounce funtionality try also pushButton.onPress(), .onRelease() and .onChange().
-    //if debounce is not working properly try changing 'debounceDelay' variable in Button.h
+
     bool pushButtonVal = pushButton.read();
     Serial.print(F("Val: ")); Serial.println(pushButtonVal);
 
     }
     else if(menuOption == '5') {
-    // Continuous Rotation Micro Servo - FS90R - Test Code
-    // The servo will rotate CW in full speed, CCW in full speed, and will stop  with an interval of 2000 milliseconds (2 seconds) 
+    
     servo360Micro.attach(SERVO360MICRO_PIN_SIG);         // 1. attach the servo to correct pin to control it.
     servo360Micro.write(180);  // 2. turns servo CW in full speed. change the value in the brackets (180) to change the speed. As these numbers move closer to 90, the servo will move slower in that direction.
     delay(2000);                              // 3. waits 2000 milliseconds (2 sec). change the value in the brackets (2000) for a longer or shorter delay in milliseconds.
@@ -140,8 +127,7 @@ void loop()
     servo360Micro.detach();                    // 8. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
     else if(menuOption == '6') {
-    // Standard Size - High Torque - Metal Gear Servo - MG995 #1 - Test Code
-    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+   
     servoMD1_1.attach(SERVOMD1_1_PIN_SIG);         // 1. attach the servo to correct pin to control it.
     servoMD1_1.write(servoMD1_1TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
     delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
@@ -150,8 +136,7 @@ void loop()
     servoMD1_1.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
     else if(menuOption == '7') {
-    // Standard Size - High Torque - Metal Gear Servo - MG995 #2 - Test Code
-    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+   
     servoMD2_2.attach(SERVOMD2_2_PIN_SIG);         // 1. attach the servo to correct pin to control it.
     servoMD2_2.write(servoMD2_2TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
     delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
@@ -160,8 +145,8 @@ void loop()
     servoMD2_2.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
     }
     else if(menuOption == '8') {
-    // Standard Size - High Torque - Metal Gear Servo - MG995 #3 - Test Code
-    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+
+
     servoMD3_3.attach(SERVOMD3_3_PIN_SIG);         // 1. attach the servo to correct pin to control it.
     servoMD3_3.write(servoMD3_3TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
     delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
@@ -179,8 +164,6 @@ void loop()
 
 
 
-// Menu function for selecting the components to be tested
-// Follow serial monitor for instrcutions
 char menu()
 {
 
