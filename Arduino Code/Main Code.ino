@@ -19,15 +19,14 @@
 #define SERVOMD2_2_PIN_SIG	7
 #define SERVOMD3_3_PIN_SIG	8
 
-
-
 // Global variables and defines
-const int servoMD1_1RestPosition   = 20;  //Starting position
-const int servoMD1_1TargetPosition = 150; //Position when event is detected
-const int servoMD2_2RestPosition   = 20;  //Starting position
-const int servoMD2_2TargetPosition = 150; //Position when event is detected
-const int servoMD3_3RestPosition   = 20;  //Starting position
-const int servoMD3_3TargetPosition = 150; //Position when event is detected
+const int servoMD1_1RestPosition   = 20; 
+const int servoMD1_1TargetPosition = 150; 
+const int servoMD2_2RestPosition   = 20; 
+const int servoMD2_2TargetPosition = 150; 
+const int servoMD3_3RestPosition   = 20;  
+const int servoMD3_3TargetPosition = 150; 
+
 // object initialization
 BTHC05 bthc05(BTHC05_PIN_RXD,BTHC05_PIN_TXD);
 Joystick joystick(JOYSTICK_PIN_VRX,JOYSTICK_PIN_VRY,JOYSTICK_PIN_SW);
@@ -75,14 +74,12 @@ void setup()
 void loop() 
 {
     
-    
     if(menuOption == '1') {
  
     String bthc05Str = "";
 
     if (bthc05.available())
     {
-
 
     Serial.print("BT Raw Data: ");
     Serial.println(bthc05Str);
@@ -128,31 +125,31 @@ void loop()
     }
     else if(menuOption == '6') {
    
-    servoMD1_1.attach(SERVOMD1_1_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servoMD1_1.write(servoMD1_1TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
-    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD1_1.write(servoMD1_1RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
-    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD1_1.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    servoMD1_1.attach(SERVOMD1_1_PIN_SIG);       
+    servoMD1_1.write(servoMD1_1TargetPosition);  
+    delay(500);                       
+    servoMD1_1.write(servoMD1_1RestPosition); 
+    delay(500);                             
+    servoMD1_1.detach();                
     }
     else if(menuOption == '7') {
    
-    servoMD2_2.attach(SERVOMD2_2_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servoMD2_2.write(servoMD2_2TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
-    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD2_2.write(servoMD2_2RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
-    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD2_2.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    servoMD2_2.attach(SERVOMD2_2_PIN_SIG);        
+    servoMD2_2.write(servoMD2_2TargetPosition); 
+    delay(500);                            
+    servoMD2_2.write(servoMD2_2RestPosition);   
+    delay(500);                             
+    servoMD2_2.detach();                    
     }
     else if(menuOption == '8') {
 
 
-    servoMD3_3.attach(SERVOMD3_3_PIN_SIG);         // 1. attach the servo to correct pin to control it.
-    servoMD3_3.write(servoMD3_3TargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
-    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD3_3.write(servoMD3_3RestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
-    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    servoMD3_3.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    servoMD3_3.attach(SERVOMD3_3_PIN_SIG);         
+    servoMD3_3.write(servoMD3_3TargetPosition); 
+    delay(500);                            
+    servoMD3_3.write(servoMD3_3RestPosition);    
+    delay(500);                             
+    servoMD3_3.detach();                   
     }
     
     if (millis() - time0 > timeout)
