@@ -39,7 +39,7 @@ Servo servoMD2_2;
 Servo servoMD3_3;
 
 
-const int timeout = 10000;       //define timeout of 10 sec
+const int timeout = 10000;      
 char menuOption = 0;
 long time0;
 
@@ -48,7 +48,7 @@ void setup()
 {
 
     Serial.begin(9600);
-    while (!Serial) ; // wait for serial port to connect. Needed for native USB
+    while (!Serial) ; 
     Serial.println("start");
     
     bthc05.begin(9600);
@@ -104,10 +104,10 @@ void loop()
 
     for(int i=255 ; i> 0 ; i -= 5)
     {
-        ledB.dim(i);                      // 1. Dim Led 
-        delay(15);                               // 2. waits 5 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+        ledB.dim(i);                    
+        delay(15);                              
     }                                          
-    ledB.off();                        // 3. turns off
+    ledB.off();                    
     }
     else if(menuOption == '4') {
 
