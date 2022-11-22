@@ -34,4 +34,13 @@ Miscellaneous Items:
   - [Dremel 100 Series 120 V](https://www.ebay.com/itm/165558436252?chn=ps&mkevt=1&mkcid=28)
   - [LCD Display Digital Calipers](https://www.amazon.com/Auto-Off-Conversion-Measuring-Household-Measurement/dp/B09M225ZP9/ref=asc_df_B09M225ZP9/?tag=hyprod-20&linkCode=df0&hvadid=598694042870&hvpos=&hvnetw=g&hvrand=16298055017569767196&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9032043&hvtargid=pla-1675873160099&psc=1)
   - M42 Hex Socket Cap Screws 
+  
+ ___
+Data:
+Claw gripper torque 18 N⋅cm.
+Total arm rotation torque 54 N⋅cm.
+10 N loads @min extension (5 cm).
+2.4 N @max extension (23 cm).
+Base stepper motor ±1° precision (500 steps).
+1.7 kg net weight.
 
