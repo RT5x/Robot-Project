@@ -37,10 +37,10 @@ Miscellaneous Items:
   
  ___
 Data:
-Claw gripper torque 18 N⋅cm.
-Total arm rotation torque 54 N⋅cm.
-10 N loads @min extension (5 cm).
-2.4 N @max extension (23 cm).
-Base stepper motor ±1° precision (500 steps).
-1.7 kg net weight.
+- Claw gripper torque 18 N⋅cm.
+- Total arm rotation torque 54 N⋅cm.
+- 10 N loads @min extension (5 cm).
+- 2.4 N @max extension (23 cm).
+- Base stepper motor ±1° precision (500 steps).
+- 1.7 kg net weight.
 
